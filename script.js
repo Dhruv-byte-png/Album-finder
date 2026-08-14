@@ -24,8 +24,20 @@ const albums = [
 ];
 
 searchBtn.addEventListener("click", function(){
+
+    const query = searchInput.value.toLowerCase();
+
+    const filteredAlbums = albums.filter(function(album){
+        return album.name.toLowerCase().includes(query) ||
+            album.artist.toLowerCase().includes(query);
+    });
+
+    if(filteredAlbums.length == 0){
+        results.innerHTML = "<p>No albums found. Try another search.</p>";
+        return;
+    }
     
-    results.innerHTML = albums.map(function(album) {
+    results.innerHTML = filteredAlbums.map(function(album) {
         return `
             <div class="album-card">
                 <img src="${album.image}" alt="${album.name}">
