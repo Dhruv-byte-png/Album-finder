@@ -6,6 +6,8 @@ function searchAlbums() {
 
     const query = searchInput.value.trim();
 
+    const encodedQuery = encodeURIComponent(query);
+
     if(query === ""){
         results.innerHTML = `
             <p class="message">
@@ -21,7 +23,7 @@ function searchAlbums() {
         </p>
     `;
 
-    fetch(`https://itunes.apple.com/search?term=${query}&entity=album&limit=5`)
+    fetch(`https://itunes.apple.com/search?term=${encodedQuery}&entity=album&limit=5`)
         .then(function(response) {
             return response.json();
         })
