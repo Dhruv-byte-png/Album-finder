@@ -138,6 +138,11 @@ h1{
         width: 100%;
         margin-left: 0;
     }
+
+    #sortSelect {
+        width: 100%;
+        margin-left: 0;
+    }
 }
 
 .favorite-btn {
@@ -155,6 +160,21 @@ h1{
     background-color: #ddd;
 }
 
+.remove-favorite-btn{
+    display: block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #eee;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.remove-favorite-btn:hover {
+    background-color: #ddd;
+}
+
 .album-info{
     margin: 10px 0;
     font-size: 14px;
@@ -166,4 +186,35 @@ h1{
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
+}
+
+#sortSelect {
+    padding: 12px 15px;
+    margin-left: 6px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+}
+
+#sortSelect:focus {
+    outline: none;
+    border-color: #555;
+}
+
+#showFavoritesBin {
+    padding: 12px 22px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #111;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#showFavoritesBtn:hover{
+    background-color: #333;
 }

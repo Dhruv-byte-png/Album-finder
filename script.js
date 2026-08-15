@@ -6,6 +6,7 @@ const sortSelect = document.getElementById("sortSelect");
 
 let favorites = [];
 let currentAlbums = [];
+let showingFavorites = false;
 
 const savedFavorites = localStorage.getItem("favorites");
 
@@ -38,12 +39,12 @@ function displayAlbums(albums){
 
                     <p>${album.artistName}</p>
 
-                    <p>${album.trackCount} ${albums.trackCount === 1 ? "track" : "tracks"}</p>
+                    <p>${album.trackCount} ${album.trackCount === 1 ? "track" : "tracks"}</p>
 
                     <p>${formattedDate}</p>
 
                     <a href="${album.collectionViewUrl}" target="_blank">
-                        View in iTuens
+                        View in iTunes
                     </a>
 
                     <button class="favorite-btn">
@@ -92,31 +93,9 @@ function searchAlbums() {
             }
 
             currentAlbums = data.results;
-
-            const resultCount = data.results.length;
+            showingFavorites = false;
 
             displayAlbums(currentAlbums);
-
-            const favoriteButtons = document.querySelectorAll(".favorite-btn");
-
-            favoriteButtons.forEach(function(button , index){
-                button.addEventListener("click" , function(){
-
-                    const album = data.results[index];
-
-                    const alreadyFavorite = favorites.some(function(favorite){
-                        return favorite.collectionId === album.collectionId;
-                    });
-                    if(alreadyFavorite){
-                        return;
-                    }
-
-                    favorites.push(album);
-                    localStorage.setItem("favorites", JSON.stringify(favorites));
-                    button.innerHTML =  "❤️ Favorited";
-                    console.log(favorites);
-                });
-            });
 
         })
         .catch(function(error){
@@ -138,6 +117,8 @@ searchInput.addEventListener("keydown", function(event){
 })
 
 showFavoritesBtn.addEventListener("click", function(){
+
+    showingFavorites = true;
 
     if(favorites.length === 0){
         results.innerHTML = `
@@ -168,7 +149,7 @@ showFavoritesBtn.addEventListener("click", function(){
                     <p>${formattedDate}</p>
                 </div>
 
-                <a herf="${album.collectionViewUrl}" target="_blank">
+                <a href="${album.collectionViewUrl}" target="_blank">
                     View in iTunes
                 </a>
 
@@ -180,50 +161,94 @@ showFavoritesBtn.addEventListener("click", function(){
         `;
     }).join("");
 
-    results.addEventListener("click", function(event){
-
-        if(event.target.classList.contains("remove-favorite-btn")){
-
-            const albumId = Number(event.target.dataset.id);
-
-            favorites = favorites.filter(function(album){
-                return album.collectionId !== albumId;
-            });
-
-            localStorage.setItem("favorites" , JSON.stringify(favorites));
-
-            showFavoritesBtn.click();
-        }
-    }) 
 }) 
+
+results.addEventListener("click", function(event){
+
+    if(event.target.classList.contains("favorite-btn")){
+
+        const card = event.target.closest(".album-card");
+
+        const albumTitle = card.querySelector("h2").textContent;
+
+        const album = currentAlbums.find(function(album){
+            return album.collectionName === albumTitle;
+        });
+
+        if(!album){
+            return;
+        }
+
+        const alreadyFavorite = favorites.some(function(favorite){
+            return favorite.collectionId === album.collectionId;
+        });
+
+        if(alreadyFavorite){
+            return;
+        }
+
+        favorites.push(album);
+
+        localStorage.setItem(
+            "favorites",
+            JSON.stringify(favorites)
+        );
+
+        event.target.innerHTML = "❤️ Favorited";
+    }
+
+    if(event.target.classList.contains("remove-favorite-btn")){
+
+        const albumId = Number(event.target.dataset.id);
+
+        favorites = favorites.filter(function(album){
+            return album.collectionId !== albumId;
+        });
+
+        localStorage.setItem(
+            "favorites" , 
+            JSON.stringify(favorites)
+        );
+
+        showFavoritesBtn.click();
+    }
+}); 
 
 sortSelect.addEventListener("change", function(){
 
     const sortValue = sortSelect.value;
 
+    const albumToSort = showingFavorites ? favorites : currentAlbums;
+
     if(sortValue === "az"){
-        currentAlbums.sort(function(a,b){
+        albumToSort.sort(function(a,b){
             return a.collectionName.localeCompare(b.collectionName);
         });
     }
 
     if(sortValue === "za"){
-        currentAlbums.sort(function(a , b){
+        albumToSort.sort(function(a , b){
             return b.collectionName.localeCompare(a.collectionName);
         });
     }
 
     if(sortValue === "newest"){
-        currentAlbums.sort(function(a,b){
+        albumToSort.sort(function(a,b){
             return new Date(b.releaseDate) - new Date(a.releaseDate);
         });
     }
 
     if(sortValue === "oldest"){
-        currentAlbums.sort(function(a,b){
+        albumToSort.sort(function(a,b){
             return new Date(a.releaseDate) - new Date(b.releaseDate);
         });
     }
 
-    displayAlbums(currentAlbums);
+    if(showingFavorites){
+        showFavoritesBtn.click();
+    }
+    else {
+        displayAlbums(currentAlbums);
+    }
+
 });
