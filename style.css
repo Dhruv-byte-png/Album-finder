@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body{
 
     font-family: Arial,sans-serif;
@@ -9,35 +13,52 @@ body{
 }
 
 #searchInput {
-    padding: 10px;
-    width: 250px;
+    padding: 12px 15px;
+    width: 280px;
     font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: #555;
 }
 
 #searchBtn {
-    padding: 10px 20px;
+    padding: 12px 22px;
+    margin-left: 6px;
     font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #111;
+    color: white;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+#searchBtn:hover {
+    background-color: #333;
 }
 
 #results {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
     margin-top: 30px;
 }
 
 .album-card {
-    width: 220px;
-    padding: 15px;
+    padding: 18px;
     background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
 }  
 
 .album-card:hover{
-    transform: translateY(-5px);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .album-card img {
@@ -49,10 +70,26 @@ body{
 
 .album-card h2 {
     font-size: 20px;
-    margin-bottom: 5px;
+    margin: 15px 0 6px;
 }
 
 .album-card p {
     margin: 5px 0;
+}
+
+.album-card a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #111;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.album-card a:hover{
+    background-color: #333;
 }
 
