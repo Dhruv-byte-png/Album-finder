@@ -2,13 +2,57 @@ const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 const results = document.getElementById("results");
 const showFavoritesBtn = document.getElementById("showFavoritesBtn");
+const sortSelect = document.getElementById("sortSelect");
 
 let favorites = [];
+let currentAlbums = [];
 
 const savedFavorites = localStorage.getItem("favorites");
 
 if(savedFavorites){
     favorites = JSON.parse(savedFavorites);
+}
+
+function displayAlbums(albums){
+    
+    results.innerHTML = `
+        <p class="result-count">
+            Found ${albums.length} album${albums.length !==1 ? "s" : ""}
+        </p>
+
+        ${albums.map(function(album){
+
+            const date = new Date(album.releaseDate);
+
+            const formattedDate = date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            });
+            
+            return `
+                <div class="album-card">
+                    <img src="${album.artworkUrl100}" alt="${album.collectionName}">
+
+                    <h2>${album.collectionName}</h2>
+
+                    <p>${album.artistName}</p>
+
+                    <p>${album.trackCount} ${albums.trackCount === 1 ? "track" : "tracks"}</p>
+
+                    <p>${formattedDate}</p>
+
+                    <a href="${album.collectionViewUrl}" target="_blank">
+                        View in iTuens
+                    </a>
+
+                    <button class="favorite-btn">
+                        ♡ Favorite
+                    </button>
+                </div>
+            `;
+        }).join("")}
+    `;
 }
 
 function searchAlbums() {
@@ -47,33 +91,11 @@ function searchAlbums() {
                 return;
             }
 
-            results.innerHTML = data.results.map(function(album) {
+            currentAlbums = data.results;
 
-                const date = new Date(album.releaseDate);
-                const formattedDate = date.toLocaleDateString("en-US" , {
-                    year : "numeric",
-                    month: "long",
-                    day: "numeric",
-                });
+            const resultCount = data.results.length;
 
-                return `
-                    <div class="album-card">
-                        <img src="${album.artworkUrl100}" alt="${album.collectionName}">
-                        <h2>${album.collectionName}</h2>
-                        <p>${album.artistName}</p>
-                        <p>${formattedDate}</p>
-
-                        <a href="${album.collectionViewUrl}" target="_blank">
-                            View in iTunes
-                        </a>
-
-                        <button class="favorite-btn">
-                            ♡ Favorite
-                        </button>
-
-                    </div>
-                `;
-            }).join("");
+            displayAlbums(currentAlbums);
 
             const favoriteButtons = document.querySelectorAll(".favorite-btn");
 
@@ -140,8 +162,11 @@ showFavoritesBtn.addEventListener("click", function(){
             <div class="album-card">
                 <img src="${album.artworkUrl100}" alt="${album.collectionName}">
                 <h2>${album.collectionName}</h2>
-                <p>${album.collectionName}</p>
-                <p>${formattedDate}</p>
+                <div class="album-info">
+                    <p>${album.artistName}</p>
+                    <p>${album.trackCount} ${album.trackCount === 1 ? "track" : "tracks"}</p>
+                    <p>${formattedDate}</p>
+                </div>
 
                 <a herf="${album.collectionViewUrl}" target="_blank">
                     View in iTunes
@@ -172,3 +197,33 @@ showFavoritesBtn.addEventListener("click", function(){
     }) 
 }) 
 
+sortSelect.addEventListener("change", function(){
+
+    const sortValue = sortSelect.value;
+
+    if(sortValue === "az"){
+        currentAlbums.sort(function(a,b){
+            return a.collectionName.localeCompare(b.collectionName);
+        });
+    }
+
+    if(sortValue === "za"){
+        currentAlbums.sort(function(a , b){
+            return b.collectionName.localeCompare(a.collectionName);
+        });
+    }
+
+    if(sortValue === "newest"){
+        currentAlbums.sort(function(a,b){
+            return new Date(b.releaseDate) - new Date(a.releaseDate);
+        });
+    }
+
+    if(sortValue === "oldest"){
+        currentAlbums.sort(function(a,b){
+            return new Date(a.releaseDate) - new Date(b.releaseDate);
+        });
+    }
+
+    displayAlbums(currentAlbums);
+});

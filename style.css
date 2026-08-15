@@ -154,3 +154,16 @@ h1{
 .favorite-btn:hover {
     background-color: #ddd;
 }
+
+.album-info{
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.result-count {
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
