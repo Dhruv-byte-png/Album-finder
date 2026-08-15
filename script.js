@@ -6,12 +6,20 @@ function searchAlbums() {
 
     const query = searchInput.value.trim();
 
-    if(query == ""){
-        results.innerHTML = "Please enter an album or artist name.";
+    if(query === ""){
+        results.innerHTML = `
+            <p class="message">
+                Please enter an album or artist name.
+            </p>
+        `;
         return;
     }
 
-    results.innerHTML = "Searching for albums...🎵 ";
+    results.innerHTML = `
+        <p class="message">
+            Searching for albums... 🎵
+        </p>
+    `;
 
     fetch(`https://itunes.apple.com/search?term=${query}&entity=album&limit=5`)
         .then(function(response) {
@@ -20,7 +28,11 @@ function searchAlbums() {
         .then(function(data) {
 
             if(data.results.length === 0){
-                results.innerHTML = "<p>No albums found. Try another search.</p>";
+                results.innerHTML = `
+                    <p class="message error">
+                        No albums found. Try another search.
+                    </p>
+                `;
                 return;
             }
 
@@ -50,8 +62,12 @@ function searchAlbums() {
         })
         .catch(function(error){
             console.log(error);
-            results.innerHTML = "<p>Something went wrong. Please try again.</p>";
-        })
+            results.innerHTML = `
+                <p class="message error">
+                    Something went wrong. Please try again.
+                </p>
+            `;
+        });
 };
 
 searchBtn.addEventListener("click", searchAlbums);
