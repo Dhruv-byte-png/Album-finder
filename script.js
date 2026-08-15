@@ -1,6 +1,15 @@
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 const results = document.getElementById("results");
+const showFavoritesBtn = document.getElementById("showFavoritesBtn");
+
+let favorites = [];
+
+const savedFavorites = localStorage.getItem("favorites");
+
+if(savedFavorites){
+    favorites = JSON.parse(savedFavorites);
+}
 
 function searchAlbums() {
 
@@ -57,9 +66,35 @@ function searchAlbums() {
                         <a href="${album.collectionViewUrl}" target="_blank">
                             View in iTunes
                         </a>
+
+                        <button class="favorite-btn">
+                            ♡ Favorite
+                        </button>
+
                     </div>
                 `;
             }).join("");
+
+            const favoriteButtons = document.querySelectorAll(".favorite-btn");
+
+            favoriteButtons.forEach(function(button , index){
+                button.addEventListener("click" , function(){
+
+                    const album = data.results[index];
+
+                    const alreadyFavorite = favorites.some(function(favorite){
+                        return favorite.collectionId === album.collectionId;
+                    });
+                    if(alreadyFavorite){
+                        return;
+                    }
+
+                    favorites.push(album);
+                    localStorage.setItem("favorites", JSON.stringify(favorites));
+                    button.innerHTML =  "❤️ Favorited";
+                    console.log(favorites);
+                });
+            });
 
         })
         .catch(function(error){
@@ -80,5 +115,60 @@ searchInput.addEventListener("keydown", function(event){
     }
 })
 
+showFavoritesBtn.addEventListener("click", function(){
 
+    if(favorites.length === 0){
+        results.innerHTML = `
+            <p class="message">
+                You haven't added any favorites yet.
+            </p>
+        `;
+        return;
+    }
+
+    results.innerHTML = favorites.map(function(album){
+
+        const date = new Date(album.releaseDate);
+
+        const formattedDate = date.toLocaleDateString("en-US",{
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+
+        return `
+            <div class="album-card">
+                <img src="${album.artworkUrl100}" alt="${album.collectionName}">
+                <h2>${album.collectionName}</h2>
+                <p>${album.collectionName}</p>
+                <p>${formattedDate}</p>
+
+                <a herf="${album.collectionViewUrl}" target="_blank">
+                    View in iTunes
+                </a>
+
+                <button class="remove-favorite-btn" data-id="${album.collectionId}">
+                    Remove Favorite
+                </button>
+
+            </div>
+        `;
+    }).join("");
+
+    results.addEventListener("click", function(event){
+
+        if(event.target.classList.contains("remove-favorite-btn")){
+
+            const albumId = Number(event.target.dataset.id);
+
+            favorites = favorites.filter(function(album){
+                return album.collectionId !== albumId;
+            });
+
+            localStorage.setItem("favorites" , JSON.stringify(favorites));
+
+            showFavoritesBtn.click();
+        }
+    }) 
+}) 
 

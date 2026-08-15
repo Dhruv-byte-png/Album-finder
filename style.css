@@ -139,3 +139,18 @@ h1{
         margin-left: 0;
     }
 }
+
+.favorite-btn {
+    display: block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #eee;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.favorite-btn:hover {
+    background-color: #ddd;
+}
